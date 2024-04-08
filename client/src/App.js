@@ -53,26 +53,6 @@ function App() {
 		setTodos(todos => todos.filter(todo => todo._id !== data.result._id));
 	}
 	
-	cron.schedule('0 0 * * *', () => {
-		const currtodos = GetTodos();
-		for (let i = 0; i < currtodos.length; i++) {
-			deleteTodo(currtodo[i]._id)
-		}
-	
-		for (let i = 0; i < habits.length; i++) {
-			const data = fetch(api_base + "/todo/new", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json" 
-				},
-				body: JSON.stringify({
-					text: habits[i]
-				})
-			}).then(res => res.json());
-		} 
-	}, {
-		timezone: 'Toronto' // Set your timezone (e.g., 'America/New_York')
-	});
 
 	return (
 		<div className="App">
