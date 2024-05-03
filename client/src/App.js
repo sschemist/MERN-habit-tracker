@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 const api_base = 'http://localhost:3001';
+const habits = ["meditating", "working out", "reading"]
 
 function App() {
 	const [todos, setTodos] = useState([]);
@@ -7,8 +8,54 @@ function App() {
 	const [newTodo, setNewTodo] = useState("");
 
 	useEffect(() => {
-		GetTodos();
-	}, []);
+		const deleteAllTodos = async () => {
+            try {
+                const response = await fetch(api_base + '/todos');
+                const data = await response.json();
+                for (const todo of data) {
+                    await fetch(api_base + '/todo/delete/' + todo._id, { method: 'DELETE' });
+                }
+            } catch (error) {
+                console.error('Error deleting todos:', error);
+            }
+        };
+
+        // Function to post predefined todos
+        const postPredefinedTodos = async () => {
+            try {
+                for (const habit of habits) {
+                    await fetch(api_base + '/todo/new', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ text: habit })
+                    });
+                }
+            } catch (error) {
+                console.error('Error posting predefined todos:', error);
+            }
+        };
+
+        // Calculate the time until next morning
+        const now = new Date();
+        const morning = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+        const timeUntilMorning = morning.getTime() - now.getTime();
+
+        // Delete all todos and post predefined todos after waiting until next morning
+        setTimeout(() => {
+            deleteAllTodos();
+            postPredefinedTodos();
+            // Repeat every 24 hours
+            setInterval(() => {
+                deleteAllTodos();
+                postPredefinedTodos();
+            }, 24 * 60 * 60 * 1000);
+        }, timeUntilMorning);
+
+        // Fetch todos when the component mounts
+        GetTodos();
+    }, []);
 
 	const GetTodos = () => {
 		fetch(api_base + '/todos')
