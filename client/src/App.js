@@ -48,14 +48,19 @@ function App() {
 	}
 
 	const deleteTodo = async id => {
-		const data = await fetch(api_base + '/todo/delete/' + id, { method: "DELETE" }).then(res => res.json());
+		try{
+			const data = await fetch(api_base + '/todo/delete/' + id, { method: "DELETE" }).then(res => res.json());
 
-		setTodos(todos => todos.filter(todo => todo._id !== data.result._id));
+			setTodos(todos => todos.filter(todo => todo._id !== data.result._id));
+		}
+		catch {
+			console.log("delete failed");
+		}
 	}
 
 	return (
 		<div className="App">
-			<h1>Welcome, Tyler</h1>
+			<h1>Welcome, Sathun</h1>
 			<h4>Your tasks</h4>
 
 			<div className="todos">
